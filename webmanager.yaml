@@ -1,0 +1,38 @@
+name: Azure Static Web Apps CI/CD
+
+
+trigger: none
+
+jobs:
+- job: build_and_deploy_job
+  displayName: Build and Deploy Job
+  pool:
+    vmImage: ubuntu-latest
+  variables:
+  - group: Azure-Static-Web-Apps-polite-ground-0b8f74703-variable-group
+  steps:
+  - checkout: self
+    submodules: true
+  # Node.js setup
+  - task: NodeTool@0
+    displayName: 'Use Node.js'
+    inputs:
+      versionSpec: '18.x'      # or 20.x depending on your app
+
+  # Install dependencies
+  - script: |
+      npm install
+    displayName: 'Install dependencies'
+
+  # Build SPA
+  - script: |
+      npm run build
+    displayName: 'Build app'
+
+
+  - task: AzureStaticWebApp@0
+    inputs:
+      azure_static_web_apps_api_token: $(AZURE_STATIC_WEB_APPS_API_TOKEN_POLITE_GROUND_0B8F74703)
+      app_location: "/" # App source code path
+      api_location: "" # Api source code path - optional
+      output_location: "build" # Built app content directory - optional
